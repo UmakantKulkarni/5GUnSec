@@ -89,11 +89,11 @@ def post_to_server(ip_src, session_id):
         print(f"\nError sending POST request: {e}")
 
 
-def run(attack_enabled=False):
+def run(intf="cilium_wg0", attack_enabled=False):
     # Start sniffing packets
     if attack_enabled == "true":
         print("Starting packet capture...")
-        sniff(filter="tcp src port 80", prn=process_with_tshark)
+        sniff(iface=intf, filter="tcp src port 80", prn=process_with_tshark)
     else:
         print("Not carrying out the attack.")
         while True:
@@ -103,7 +103,4 @@ def run(attack_enabled=False):
 if __name__ == "__main__":
     from sys import argv
 
-if len(argv) == 2:
-    run(attack_enabled=str(argv[1]))
-else:
-    run(attack_enabled="false")
+run(intf=str(argv[1]), attack_enabled=str(argv[2]))
